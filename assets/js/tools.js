@@ -1,10 +1,11 @@
 /*
-*	version 1.0.1
+*	version 1.0.2
 */
 const get_base_url = function(param=''){
 	var getUrl = window.location;
 //	var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/"+param ; // para php puro
-	var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/"+ getUrl.pathname.split('/')[2] + "/"+param ; // para codeigniter
+//	var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + "/"+ getUrl.pathname.split('/')[2] + "/"+param ; // para codeigniter
+	var baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + ""+param ; // para php puro
 	return base_url_be || baseUrl;
 }
 
@@ -12,8 +13,8 @@ const sleep = function (time) {
 	return new Promise((resolve) => setTimeout(resolve, time));
 }
 
+var timeout;
 var debounce = function(func, wait, inmediate){
-	var timeout;
 	return function(){
 		var context = this, args = arguments;
 		var later = function(){
@@ -29,55 +30,29 @@ var debounce = function(func, wait, inmediate){
 
 
 var $vv = function(val,msg='',param=''){
-	function JSONstringify(json) {
-	    if (typeof json != 'string') {
-	        json = JSON.stringify(json, undefined, '\t');
-	    }
-
-	    var 
-	        arr = [],
-	        _string = 'color:green',
-	        _number = 'color:darkorange',
-	        _boolean = 'color:blue',
-	        _null = 'color:magenta',
-	        _key = 'color:red';
-
-	    json = json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-	        var style = _number;
-	        if (/^"/.test(match)) {
-	            if (/:$/.test(match)) {
-	                style = _key;
-	            } else {
-	                style = _string;
-	            }
-	        } else if (/true|false/.test(match)) {
-	            style = _boolean;
-	        } else if (/null/.test(match)) {
-	            style = _null;
-	        }
-	        arr.push(style);
-	        arr.push('');
-	        return '%c' + match + '%c';
-	    });
-
-	    arr.unshift(json);
-
-	    console.log.apply(console, arr);
-	}
 	try{
 		if(msg!=''){
 			console.log(msg+" \\/ ")
 		}
-		if(param=='json' || param=='JSON'){
-			JSONstringify(val);
-		}else{
-			console.log(val);
-		}
+		console.log(val);
+		
 		return '';
 	}catch(e){
 		console.log("Error  "+br_n+"  "+e);
 	}
 		
+};
+
+var vv = function(val,msg='',param=''){
+	try{
+		if(msg!=''){
+			console.log(msg+" \\/ ")
+		}
+		console.log(val);
+		return '';
+	}catch(e){
+		console.log("Error  "+br_n+"  "+e);
+	}	
 };
 
 
@@ -89,10 +64,14 @@ function deleteCookie(name) {
 	}
 }
 
-function setCookie(name, value, duration) {
-	var cookie = name + "=" + escape(value) +
-	((duration) ? "; duration=" + duration.toUTCString : "");
-	document.cookie = cookie;
+function setCookie(name, value, days=2) {
+	var expires = "";
+	var date = new Date();
+	date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+	expires = "; expires=" + date.toUTCString();
+	//	cookie = cookie+';path=/;SameSite=Lax';
+	const path = ';path=/;SameSite=Lax';
+	document.cookie = name + "=" + (value || "") + expires + path;
 }
 function getCookie(name) {
 	var cookies = document.cookie;
@@ -131,7 +110,7 @@ var run_script = function(script='', timefor=4000){
 	}
 }
 
-var echomsg = function(txt='',exitt='.showmsg', type=1, mode=1){
+var toast = function(txt='',exitt='.showmsg', type=1, mode=1){
 	var pp = exitt.substring(0,1);
 	
 	var classi;
@@ -158,7 +137,7 @@ var echomsg = function(txt='',exitt='.showmsg', type=1, mode=1){
 		}else{
 			$(exitt).html(texto);
 		}
-		$.when( $("#twerr_temp").fadeIn(777).delay(3000).fadeOut(4000) ).done(function(){
+		$.when( $("#twerr_temp").fadeIn(777).delay(3000) ).done(function(){
 			$('#twerr_temp').remove();	
 		}); 
 	}
